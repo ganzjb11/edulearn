@@ -64,7 +64,7 @@ export const astronomyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-purple-300">Apa Itu Lubang Hitam?</h3>
         <p className="text-lg leading-relaxed">
-          Lubang hitam adalah wilayah di ruang-waktu yang gravitasinya sangat kuat sehingga **tidak ada apa pun** yang bisa lolos dari tarikannya — bahkan cahaya sekalipun. Konsep ini pertama kali diprediksi oleh <strong>Karl Schwarzschild</strong> pada 1916 dari teori relativitas umum Einstein.
+          Lubang hitam adalah wilayah di ruang-waktu yang gravitasinya sangat kuat sehingga <strong>tidak ada apa pun</strong> yang bisa lolos dari tarikannya — bahkan cahaya sekalipun. Konsep ini pertama kali diprediksi oleh <strong>Karl Schwarzschild</strong> pada 1916 dari teori relativitas umum Einstein.
         </p>
         <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-xl border border-purple-500/30">
           <h4 className="font-semibold text-xl mb-3 text-purple-200">Struktur Lubang Hitam:</h4>
@@ -93,19 +93,19 @@ export const astronomyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-purple-300">Bagaimana Semuanya Dimulai?</h3>
         <p className="text-lg leading-relaxed">
-          Teori Big Bang menyatakan bahwa alam semesta dimulai dari **titik singularitas** yang sangat panas dan padat sekitar **13,8 miliar tahun lalu**. Titik itu meledak dan mengembang, membentuk ruang, waktu, materi, dan energi.
+          Teori Big Bang menyatakan bahwa alam semesta dimulai dari <strong>titik singularitas</strong> yang sangat panas dan padat sekitar <strong>13,8 miliar tahun lalu</strong>. Titik itu meledak dan mengembang, membentuk ruang, waktu, materi, dan energi.
         </p>
         <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-xl border border-purple-500/30">
           <h4 className="font-semibold text-xl mb-3 text-purple-200">Bukti Utama Big Bang:</h4>
           <ul className="list-disc list-inside space-y-2 text-gray-300">
-            <li><strong>Latar Belakang Gelombang Mikro Kosmik (CMB)</strong>: Sisa panas dari ledakan awal — ditemukan 1965 oleh Penzias & Wilson</li>
+            <li><strong>Latar Belakang Gelombang Mikro Kosmik (CMB)</strong>: Sisa panas dari ledakan awal — ditemukan 1965 oleh Penzias &amp; Wilson</li>
             <li><strong>Ekspansi Alam Semesta</strong>: Galaksi menjauh — ditemukan oleh Edwin Hubble (1929)</li>
             <li><strong>Kelimpahan Unsur Ringan</strong>: Rasio H:He sesuai prediksi (75% hidrogen, 25% helium)</li>
           </ul>
         </div>
         <h4 className="text-xl font-semibold text-purple-200">Timeline Awal Alam Semesta:</h4>
         <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
-          <li><strong>10⁻⁴³ detik</strong>: Era Planck — fisika kuantum & gravitasi menyatu</li>
+          <li><strong>10⁻⁴³ detik</strong>: Era Planck — fisika kuantum &amp; gravitasi menyatu</li>
           <li><strong>10⁻³⁶ detik</strong>: Inflasi kosmik — alam semesta mengembang eksponensial</li>
           <li><strong>380.000 tahun</strong>: Atom terbentuk, foton bebas — CMB lahir</li>
           <li><strong>200 juta tahun</strong>: Bintang pertama menyala</li>
@@ -123,12 +123,12 @@ export const astronomyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-purple-300">Planet di Sekitar Bintang Lain</h3>
         <p className="text-lg leading-relaxed">
-          Eksoplanet adalah planet yang mengorbit bintang di luar Tata Surya kita. Planet pertama ditemukan pada **1992**, dan kini lebih dari **5.600 eksoplanet** telah dikonfirmasi oleh misi seperti <strong>Kepler</strong> dan <strong>TESS</strong>.
+          Eksoplanet adalah planet yang mengorbit bintang di luar Tata Surya kita. Planet pertama ditemukan pada <strong>1992</strong>, dan kini lebih dari <strong>5.600 eksoplanet</strong> telah dikonfirmasi oleh misi seperti <strong>Kepler</strong> dan <strong>TESS</strong>.
         </p>
         <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-xl border border-purple-500/30">
           <h4 className="font-semibold text-xl mb-3 text-purple-200">Jenis Eksoplanet:</h4>
           <ul className="list-disc list-inside space-y-2 text-gray-300">
-            <li><strong>Hot Jupiter</strong>: Raksasa gas dekat bintang — panas & cepat orbit</li>
+            <li><strong>Hot Jupiter</strong>: Raksasa gas dekat bintang — panas &amp; cepat orbit</li>
             <li><strong>Super-Earth</strong>: 1–10 kali massa Bumi — bisa berbatu atau berair</li>
             <li><strong>Mini-Neptune</strong>: Atmosfer tebal, inti berbatu</li>
             <li><strong>Planet Layan (Eyeball)</strong>: Satu sisi selalu menghadap bintang</li>
@@ -153,7 +153,7 @@ export const astronomyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-purple-300">Awan Kosmik yang Menakjubkan</h3>
         <p className="text-lg leading-relaxed">
-          Nebula adalah awan raksasa gas (hidrogen, helium) dan debu di antar bintang. Ada dua tipe utama: <strong>nebula emisi** (bersinar karena ionisasi) dan **nebula refleksi</strong> (memantulkan cahaya bintang).
+          Nebula adalah awan raksasa gas (hidrogen, helium) dan debu di antar bintang. Ada dua tipe utama: <strong>nebula emisi</strong> (bersinar karena ionisasi) dan <strong>nebula refleksi</strong> (memantulkan cahaya bintang).
         </p>
         <div className="grid md:grid-cols-2 gap-4">
           <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-4 rounded-lg border border-purple-500/30">
@@ -169,7 +169,7 @@ export const astronomyTopics = [
             <h4 className="font-semibold text-lg mb-2 text-purple-200">Peran Nebula:</h4>
             <ul className="space-y-1 text-gray-300">
               <li>• Tempat lahir bintang (nebula gelap)</li>
-              <li>• Tempat kematian bintang (nebula planet & supernova)</li>
+              <li>• Tempat kematian bintang (nebula planet &amp; supernova)</li>
               <li>• Sumber unsur berat (karbon, oksigen, besi)</li>
             </ul>
           </div>
@@ -187,7 +187,7 @@ export const astronomyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-purple-300">Apa Itu Materi Gelap?</h3>
         <p className="text-lg leading-relaxed">
-          Materi gelap adalah bentuk materi yang **tidak memancarkan, menyerap, atau memantulkan cahaya**, sehingga tidak terlihat. Tapi keberadaannya diketahui dari **pengaruh gravitasinya** pada galaksi dan cahaya.
+          Materi gelap adalah bentuk materi yang <strong>tidak memancarkan, menyerap, atau memantulkan cahaya</strong>, sehingga tidak terlihat. Tapi keberadaannya diketahui dari <strong>pengaruh gravitasinya</strong> pada galaksi dan cahaya.
         </p>
         <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-xl border border-purple-500/30">
           <h4 className="font-semibold text-xl mb-3 text-purple-200">Bukti Keberadaan:</h4>
@@ -204,7 +204,7 @@ export const astronomyTopics = [
           <li><strong>Neutrino Steril</strong> (varian neutrino tak terdeteksi)</li>
         </ul>
         <p className="text-lg leading-relaxed">
-          Meski belum terdeteksi langsung, materi gelap diyakini menyusun **27%** dari total energi-alam semesta — jauh lebih banyak dari materi biasa (5%).
+          Meski belum terdeteksi langsung, materi gelap diyakini menyusun <strong>27%</strong> dari total energi-alam semesta — jauh lebih banyak dari materi biasa (5%).
         </p>
       </div>
     )
@@ -216,12 +216,12 @@ export const astronomyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-purple-300">Mengapa Alam Semesta Melebar Lebih Cepat?</h3>
         <p className="text-lg leading-relaxed">
-          Pada 1998, astronom menemukan bahwa ekspansi alam semesta **semakin cepat**, bukan melambat seperti yang diperkirakan. Penyebabnya disebut **energi gelap** — bentuk energi misterius yang menembus ruang hampa.
+          Pada 1998, astronom menemukan bahwa ekspansi alam semesta <strong>semakin cepat</strong>, bukan melambat seperti yang diperkirakan. Penyebabnya disebut <strong>energi gelap</strong> — bentuk energi misterius yang menembus ruang hampa.
         </p>
         <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-xl border border-purple-500/30">
           <h4 className="font-semibold text-xl mb-3 text-purple-200">Fakta Kunci:</h4>
           <ul className="list-disc list-inside space-y-2 text-gray-300">
-            <li>Menyusun **68%** dari total energi alam semesta</li>
+            <li>Menyusun <strong>68%</strong> dari total energi alam semesta</li>
             <li>Bersifat repulsif — mendorong ruang-waktu mengembang</li>
             <li>Kerapatannya konstan — semakin alam semesta membesar, semakin banyak energi gelap</li>
           </ul>
@@ -244,12 +244,12 @@ export const astronomyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-purple-300">Foto Bayi Alam Semesta</h3>
         <p className="text-lg leading-relaxed">
-          Cosmic Microwave Background (CMB) adalah radiasi lemah yang memenuhi seluruh alam semesta — sisa panas dari Big Bang **380.000 tahun setelah ledakan awal**.
+          Cosmic Microwave Background (CMB) adalah radiasi lemah yang memenuhi seluruh alam semesta — sisa panas dari Big Bang <strong>380.000 tahun setelah ledakan awal</strong>.
         </p>
         <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-xl border border-purple-500/30">
-          <h4 className="font-semibold text-xl mb-3 text-purple-200">Penemuan & Signifikansi:</h4>
+          <h4 className="font-semibold text-xl mb-3 text-purple-200">Penemuan &amp; Signifikansi:</h4>
           <ul className="list-disc list-inside space-y-2 text-gray-300">
-            <li><strong>Ditemukan 1965</strong> oleh Arno Penzias & Robert Wilson (Nobel 1978)</li>
+            <li><strong>Ditemukan 1965</strong> oleh Arno Penzias &amp; Robert Wilson (Nobel 1978)</li>
             <li><strong>Suhu</strong>: 2,725 Kelvin (-270°C)</li>
             <li><strong>Fluktuasi</strong>: Perbedaan suhu 1 bagian dalam 100.000 — benih galaksi</li>
           </ul>
@@ -273,7 +273,7 @@ export const astronomyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-purple-300">Realitas di Luar Alam Semesta Kita</h3>
         <p className="text-lg leading-relaxed">
-          Teori multialam (multiverse) menyatakan bahwa alam semesta kita hanyalah **satu dari banyak alam semesta** yang eksis secara paralel. Ini bukan fiksi ilmiah, tapi konsekuensi dari teori fisika modern.
+          Teori multialam (multiverse) menyatakan bahwa alam semesta kita hanyalah <strong>satu dari banyak alam semesta</strong> yang eksis secara paralel. Ini bukan fiksi ilmiah, tapi konsekuensi dari teori fisika modern.
         </p>
         <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-xl border border-purple-500/30">
           <h4 className="font-semibold text-xl mb-3 text-purple-200">Jenis Multialam:</h4>
@@ -284,7 +284,7 @@ export const astronomyTopics = [
             <li><strong>Matematis</strong>: Semua struktur matematis eksis secara fisik</li>
           </ul>
         </div>
-        <h4 className="text-xl font-semibold text-purple-200">Implikasi & Kontroversi:</h4>
+        <h4 className="text-xl font-semibold text-purple-200">Implikasi &amp; Kontroversi:</h4>
         <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
           <li>• Bisa jelaskan "fine-tuning" hukum fisika</li>
           <li>• Tapi sulit diuji → beberapa ilmuwan anggap bukan sains</li>
