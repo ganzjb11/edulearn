@@ -116,19 +116,19 @@ export const historyTopics = [
           <ul className="list-disc list-inside space-y-2 text-gray-300">
             <li><strong>Al-Khwarizmi</strong>: Bapak aljabar ("al-jabr"), algoritma</li>
             <li><strong>Ibnu Sina (Avicenna)</strong>: Buku "The Canon of Medicine" dipakai di Eropa 600 tahun</li>
-            <li><strong>Al-Razi</strong>: Pertama bedakan cacar & campak, kimia medis</li>
+            <li><strong>Al-Razi</strong>: Pertama bedakan cacar &amp; campak, kimia medis</li>
             <li><strong>Al-Biruni</strong>: Hitung jari-jari Bumi dengan akurasi tinggi</li>
             <li><strong>Ibnu al-Haytham</strong>: Bapak optik modern, metode ilmiah</li>
           </ul>
         </div>
         <h4 className="text-xl font-semibold text-amber-200">Institusi Ilmiah:</h4>
         <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
-          <li><strong>Baitul Hikmah (Baghdad)</strong>: Perpustakaan & pusat terjemahan</li>
+          <li><strong>Baitul Hikmah (Baghdad)</strong>: Perpustakaan &amp; pusat terjemahan</li>
           <li><strong>Rumah Sakit Pertama</strong>: Di Baghdad (abad ke-9)</li>
           <li><strong>Observatorium</strong>: Untuk astronomi presisi</li>
         </ul>
         <p className="text-lg leading-relaxed">
-          Ilmuwan Muslim menerjemahkan & mengembangkan karya Yunani, lalu mentransfernya ke Eropa — jadi jembatan Renaissance.
+          Ilmuwan Muslim menerjemahkan &amp; mengembangkan karya Yunani, lalu mentransfernya ke Eropa — jadi jembatan Renaissance.
         </p>
       </div>
     )
@@ -154,9 +154,9 @@ export const historyTopics = [
         </div>
         <h4 className="text-xl font-semibold text-amber-200">Prinsip Utama:</h4>
         <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
-          <li>Humanisme: Fokus pada potensi & pencapaian manusia</li>
-          <li>Individualisme: Ekspresi diri & bakat pribadi</li>
-          <li>Ilmu & Observasi: Menggantikan dogma agama</li>
+          <li>Humanisme: Fokus pada potensi &amp; pencapaian manusia</li>
+          <li>Individualisme: Ekspresi diri &amp; bakat pribadi</li>
+          <li>Ilmu &amp; Observasi: Menggantikan dogma agama</li>
         </ul>
         <p className="text-lg leading-relaxed">
           Renaissance meletakkan dasar bagi Revolusi Ilmiah dan Abad Pencerahan.
@@ -176,17 +176,17 @@ export const historyTopics = [
         <div className="bg-gradient-to-r from-amber-900/30 to-orange-900/30 p-6 rounded-xl border border-amber-500/30">
           <h4 className="font-semibold text-xl mb-3 text-amber-200">Inovasi Kunci:</h4>
           <ul className="list-disc list-inside space-y-2 text-gray-300">
-            <li><strong>Mesin Uap (James Watt)</strong>: Tenaga untuk pabrik & transportasi</li>
+            <li><strong>Mesin Uap (James Watt)</strong>: Tenaga untuk pabrik &amp; transportasi</li>
             <li><strong>Pemintalan Mekanis</strong>: Produksi tekstil massal</li>
-            <li><strong>Kereta Api (George Stephenson)</strong>: Transportasi cepat & murah</li>
-            <li><strong>Baja & Besi</strong>: Bangunan & mesin tahan lama</li>
+            <li><strong>Kereta Api (George Stephenson)</strong>: Transportasi cepat &amp; murah</li>
+            <li><strong>Baja &amp; Besi</strong>: Bangunan &amp; mesin tahan lama</li>
           </ul>
         </div>
         <h4 className="text-xl font-semibold text-amber-200">Dampak Sosial:</h4>
         <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
           <li>Urbanisasi: Orang pindah ke kota untuk kerja pabrik</li>
           <li>Kelas Pekerja: Upah rendah, jam kerja panjang, anak-anak kerja</li>
-          <li>Kapitalisme Modern: Akumulasi modal & produksi massal</li>
+          <li>Kapitalisme Modern: Akumulasi modal &amp; produksi massal</li>
         </ul>
         <p className="text-lg leading-relaxed">
           Revolusi Industri menciptakan standar hidup yang lebih tinggi — tapi dengan biaya sosial yang besar.
@@ -199,7 +199,7 @@ export const historyTopics = [
     title: 'Perang Dunia I: Perang yang Mengakhiri Dunia Lama',
     content: (
       <div className="space-y-6">
-        <h3 className="text-2xl font-bold text-amber-300">1914–1918: Perang Parit & Kehancuran Massal</h3>
+        <h3 className="text-2xl font-bold text-amber-300">1914–1918: Perang Parit &amp; Kehancuran Massal</h3>
         <p className="text-lg leading-relaxed">
           PD I dimulai 28 Juli 1914 setelah pembunuhan Archduke Franz Ferdinand. Melibatkan 30+ negara, 20 juta tewas, teknologi perang modern pertama.
         </p>
@@ -226,7 +226,7 @@ export const historyTopics = [
   },
   {
     id: 'world-war-2',
-    title: 'Perang Dunia II: Perang Total & Kebangkitan Dunia Baru',
+    title: 'Perang Dunia II: Perang Total &amp; Kebangkitan Dunia Baru',
     content: (
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-amber-300">1939–1945: Perang Terbesar dalam Sejarah</h3>
@@ -237,17 +237,17 @@ export const historyTopics = [
           <h4 className="font-semibold text-xl mb-3 text-amber-200">Kubu Utama:</h4>
           <ul className="list-disc list-inside space-y-2 text-gray-300">
             <li><strong>Sekutu</strong>: AS, Inggris, Uni Soviet, Tiongkok</li>
-            <li><strong>Ax<0xE8>s</strong>: Jerman Nazi, Italia Fasis, Jepang Kekaisaran</li>
+            <li><strong>Axis</strong>: Jerman Nazi, Italia Fasis, Jepang Kekaisaran</li>
           </ul>
         </div>
         <h4 className="text-xl font-semibold text-amber-200">Peristiwa Penting:</h4>
         <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
           <li><strong>Holocaust</strong>: Pembunuhan 6 juta Yahudi oleh Nazi</li>
-          <li><strong>Bom Atom Hiroshima & Nagasaki</strong> (1945): Akhir perang</li>
-          <li><strong>Konferensi Yalta & Potsdam</strong>: Pembagian Eropa pasca-perang</li>
+          <li><strong>Bom Atom Hiroshima &amp; Nagasaki</strong> (1945): Akhir perang</li>
+          <li><strong>Konferensi Yalta &amp; Potsdam</strong>: Pembagian Eropa pasca-perang</li>
         </ul>
         <p className="text-lg leading-relaxed">
-          PD II berakhir dengan kemenangan Sekutu, lahirnya PBB, dan dimulainya Perang Dingin antara AS & Uni Soviet.
+          PD II berakhir dengan kemenangan Sekutu, lahirnya PBB, dan dimulainya Perang Dingin antara AS &amp; Uni Soviet.
         </p>
       </div>
     )
@@ -272,7 +272,7 @@ export const historyTopics = [
         </div>
         <h4 className="text-xl font-semibold text-amber-200">Akhir Perang Dingin:</h4>
         <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
-          <li>Reformasi Gorbachev: Glasnost & Perestroika</li>
+          <li>Reformasi Gorbachev: Glasnost &amp; Perestroika</li>
           <li>Jatuhnya Tembok Berlin (1989)</li>
           <li>Keruntuhan Uni Soviet (1991)</li>
         </ul>
@@ -289,7 +289,7 @@ export const historyTopics = [
       <div className="space-y-6">
         <h3 className="text-2xl font-bold text-amber-300">17 Agustus 1945: Lahirnya Republik Indonesia</h3>
         <p className="text-lg leading-relaxed">
-          Setelah 350 tahun penjajahan Belanda dan 3,5 tahun pendudukan Jepang, Indonesia memproklamasikan kemerdekaan pada 17 Agustus 1945 oleh Soekarno & Hatta.
+          Setelah 350 tahun penjajahan Belanda dan 3,5 tahun pendudukan Jepang, Indonesia memproklamasikan kemerdekaan pada 17 Agustus 1945 oleh Soekarno &amp; Hatta.
         </p>
         <div className="bg-gradient-to-r from-amber-900/30 to-orange-900/30 p-6 rounded-xl border border-amber-500/30">
           <h4 className="font-semibold text-xl mb-3 text-amber-200">Tokoh Proklamator:</h4>
@@ -299,7 +299,7 @@ export const historyTopics = [
             <li><strong>Soemarsono, Chairul Saleh, dll</strong>: Pemuda yang mendesak proklamasi</li>
           </ul>
         </div>
-        <h4 className="text-xl font-semibold text-amber-200">Perjuangan Diplomasi & Senjata:</h4>
+        <h4 className="text-xl font-semibold text-amber-200">Perjuangan Diplomasi &amp; Senjata:</h4>
         <ul className="list-disc list-inside space-y-2 text-gray-300 ml-4">
           <li><strong>Peristiwa Rengasdengklok</strong>: Pemuda menculik Soekarno-Hatta agar segera proklamasi</li>
           <li><strong>Perang Kemerdekaan (1945–1949)</strong>: Melawan Belanda yang ingin kembali menjajah</li>
