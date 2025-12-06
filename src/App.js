@@ -7,6 +7,7 @@ const App = () => {
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [isAboutOpen, setIsAboutOpen] = useState(false); // 👈 Tambah state About
 
   useEffect(() => {
     const checkMobile = () => {
@@ -275,6 +276,22 @@ const App = () => {
         mendalam, dan menginspirasi. Di sini, setiap pengetahuan dijelaskan dari akar hingga puncaknya.
       </motion.p>
 
+      {/* BUTTON ABOUT ME */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.5 }}
+        className="flex justify-center mb-8"
+      >
+        <button
+          onClick={() => setIsAboutOpen(true)}
+          className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-indigo-700 rounded-full font-semibold text-white hover:from-cyan-500 hover:to-indigo-600 transition-all duration-300 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 flex items-center space-x-2"
+        >
+          <Sparkles className="w-5 h-5" />
+          <span>Tentang Kami</span>
+        </button>
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -511,6 +528,109 @@ const App = () => {
           </div>
         </div>
       </div>
+
+      {/* MODAL ABOUT ME */}
+      <AnimatePresence>
+        {isAboutOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+            onClick={() => setIsAboutOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.8, opacity: 0, y: 20 }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="bg-gradient-to-br from-gray-900 via-indigo-900 to-purple-900 rounded-3xl p-8 max-w-2xl w-full border border-cyan-500/40 relative overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Bintang latar belakang */}
+              <div className="absolute inset-0 opacity-20">
+                {[...Array(25)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="absolute w-1 h-1 bg-cyan-300 rounded-full"
+                    style={{
+                      top: `${Math.random() * 100}%`,
+                      left: `${Math.random() * 100}%`,
+                    }}
+                  />
+                ))}
+              </div>
+
+              <div className="relative z-10 text-center">
+                <motion.h2
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.1 }}
+                  className="text-3xl font-bold mb-2 bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent"
+                >
+                  🌌 Tim EduLearn
+                </motion.h2>
+
+                <motion.p
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.2 }}
+                  className="text-gray-300 mb-6"
+                >
+                  Dua explorer muda yang menjelajahi alam semesta ilmu pengetahuan.
+                </motion.p>
+
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  <motion.div
+                    initial={{ x: -30, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                    className="bg-black/30 p-5 rounded-2xl border border-cyan-500/30"
+                  >
+                    <div className="text-cyan-300 font-bold text-lg mb-2">AINUR ROFIK</div>
+                    <div className="text-sm text-gray-400">Umur: 15 tahun 🧠</div>
+                    <div className="mt-3 text-gray-300 text-sm">
+                      Arsitek utama EduLearn. Pencinta astronomi, matematika, dan sejarah. Percaya bahwa ilmu adalah cahaya di tengah kegelapan kosmos.
+                    </div>
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ x: 30, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-black/30 p-5 rounded-2xl border border-purple-500/30"
+                  >
+                    <div className="text-purple-300 font-bold text-lg mb-2">FAUZI FIRMANSYAH</div>
+                    <div className="text-sm text-gray-400">Support System 🛸</div>
+                    <div className="mt-3 text-gray-300 text-sm">
+                      Sang penjaga semangat. Selalu siap memberi dorongan, ide, dan energi positif. Tanpanya, misi ini tak akan berjalan.
+                    </div>
+                  </motion.div>
+                </div>
+
+                <motion.p
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="text-gray-400 italic mb-6"
+                >
+                  "Bersama, kami membangun portal edukasi yang menginspirasi — seperti dua bintang yang saling mengorbit, menciptakan cahaya bersama."
+                </motion.p>
+
+                <motion.button
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.6 }}
+                  onClick={() => setIsAboutOpen(false)}
+                  className="px-5 py-2 bg-gradient-to-r from-gray-700 to-gray-800 rounded-full text-white hover:from-gray-600 hover:to-gray-700 transition-colors"
+                >
+                  Tutup Misi
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer */}
       <footer className="mt-12 py-8 border-t border-white/10">
