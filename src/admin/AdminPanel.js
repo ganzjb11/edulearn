@@ -97,7 +97,7 @@ const AdminPanel = ({ onBack }) => {
   const handleLogin = (e) => {
     e.preventDefault();
     // 🔑 GANTI PASSWORD DI SINI
-    if (password === 'edulearn2025') {
+    if (password === 'p') {
       setAuthenticated(true);
     } else {
       alert('Password salah! Hanya AINUR ROFIK & FAUZI FIRMANSYAH yang boleh masuk!');
