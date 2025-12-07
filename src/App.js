@@ -1,584 +1,571 @@
+// src/admin/AdminPanel.js
 import React, { useState, useEffect } from 'react';
-import { Menu, X, BookOpen, Star, History, Calculator, FlaskConical, ChevronLeft, Sparkles, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, User, BarChart3, BookOpen, Settings, Shield, Save, Trash2, Plus, Edit3, X as XIcon } from 'lucide-react';
+import BlackholeBackground from '../components/BlackholeBackground';
 
-// 🔥 IMPOR DATA
-import quotes from './data/quotes.json';
-import { astronomyTopics } from './data/astronomyTopics';
-import { historyTopics } from './data/historyTopics';
-import { mathTopics } from './data/mathTopics';
-import { scienceTopics } from './data/scienceTopics';
+// Helper: Simpan data ke localStorage
+const saveToStorage = (key, data) => {
+  localStorage.setItem(key, JSON.stringify(data));
+};
 
-// 🔥 IMPOR KOMPONEN BARU
-import BlackholeBackground from './components/BlackholeBackground';
-import AdminPanel from './admin/AdminPanel';
+// Helper: Ambil data dari localStorage
+const getFromStorage = (key, fallback) => {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : fallback;
+};
 
-const App = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedTopic, setSelectedTopic] = useState(null);
-  const [isAboutPage, setIsAboutPage] = useState(false);
-  const [isAdminPanel, setIsAdminPanel] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [currentQuote, setCurrentQuote] = useState(0);
-  const [aboutData, setAboutData] = useState(null);
-  const [maintenanceMode, setMaintenanceMode] = useState({
-    about: false
-  });
+// Helper: Generate ID unik
+const generateId = () => Math.random().toString(36).substr(2, 9);
 
-  useEffect(() => {
-    // Load about data from localStorage
-    const saved = localStorage.getItem('edulearn_about');
-    if (saved) {
-      setAboutData(JSON.parse(saved));
-    }
-  }, []);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentQuote((prev) => (prev + 1) % quotes.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  const categories = [
-    {
-      id: 'astronomy',
-      title: 'Astronomi',
-      icon: Star,
-      color: 'from-purple-600 to-blue-600',
-      description: 'Jelajahi alam semesta, bintang, galaksi, dan misteri kosmik',
-      topics: astronomyTopics,
-    },
-    {
-      id: 'history',
-      title: 'Sejarah',
-      icon: History,
-      color: 'from-amber-600 to-orange-600',
-      description: 'Telusuri peradaban kuno hingga peristiwa modern',
-      topics: historyTopics,
-    },
-    {
-      id: 'mathematics',
-      title: 'Matematika',
-      icon: Calculator,
-      color: 'from-green-600 to-emerald-600',
-      description: 'Pelajari konsep matematika dari dasar hingga lanjut',
-      topics: mathTopics,
-    },
-    {
-      id: 'science',
-      title: 'Sains',
-      icon: FlaskConical,
-      color: 'from-red-600 to-pink-600',
-      description: 'Eksplorasi dunia sains dari fisika hingga biologi',
-      topics: scienceTopics,
-    }
-  ];
-
-  const handleCategoryClick = (category) => {
-    setSelectedCategory(category);
-    setSelectedTopic(null);
-    if (isMobile) setIsOpen(false);
-  };
-
-  const handleTopicClick = (topic) => {
-    setSelectedTopic(topic);
-  };
-
-  const handleBack = () => {
-    if (selectedTopic) {
-      setSelectedTopic(null);
-    } else if (selectedCategory) {
-      setSelectedCategory(null);
-    } else if (isAboutPage) {
-      setIsAboutPage(false);
-    } else if (isAdminPanel) {
-      setIsAdminPanel(false);
-    }
-  };
-
-  const handleSaveAbout = (data) => {
-    setAboutData(data);
-  };
-
-  const handleToggleMaintenance = (feature) => {
-    setMaintenanceMode(prev => ({
-      ...prev,
-      [feature]: !prev[feature]
-    }));
-  };
-
-  const renderHomeContent = () => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8 }}
-      className="text-center py-12"
-    >
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="inline-block mb-8"
-      >
-        <BookOpen className="w-24 h-24 mx-auto text-purple-400" />
-      </motion.div>
-      
-      <motion.h2
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent"
-      >
-        Selamat Datang di EduLearn!
-      </motion.h2>
-      
-      <motion.p
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        className="text-xl text-gray-300 max-w-3xl mx-auto mb-12 leading-relaxed"
-      >
-        Platform edukasi interaktif yang dirancang untuk membuat belajar menjadi pengalaman yang menyenangkan, 
-        mendalam, dan menginspirasi. Di sini, setiap pengetahuan dijelaskan dari akar hingga puncaknya.
-      </motion.p>
-
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-        className="flex justify-center mb-8"
-      >
-        <button
-          onClick={() => setIsAboutPage(true)}
-          className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-indigo-700 rounded-full font-semibold text-white hover:from-cyan-500 hover:to-indigo-600 transition-all duration-300 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-500/50 flex items-center space-x-2"
-        >
-          <Sparkles className="w-5 h-5" />
-          <span>Tentang Kami</span>
-        </button>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.6 }}
-        className="bg-gradient-to-r from-purple-900/40 to-pink-900/40 backdrop-blur-md rounded-3xl p-8 border border-purple-500/50 max-w-4xl mx-auto mb-12"
-      >
-        <div className="flex items-center justify-center mb-4">
-          <Sparkles className="w-6 h-6 text-yellow-400 mr-2" />
-          <h3 className="text-2xl font-bold text-yellow-300">Kata-Kata Motivasi</h3>
-        </div>
-        <motion.p
-          key={currentQuote}
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 20 }}
-          transition={{ duration: 0.5 }}
-          className="text-lg text-center text-gray-100 italic"
-        >
-          "{quotes[currentQuote]}"
-        </motion.p>
-      </motion.div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.8 }}
-        className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto"
-      >
-        {categories.map((category, index) => {
-          const IconComponent = category.icon;
-          return (
-            <motion.div
-              key={category.id}
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
-              whileHover={{ y: -10, scale: 1.05 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 cursor-pointer transition-all duration-300"
-              onClick={() => handleCategoryClick(category)}
-            >
-              <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${category.color} mx-auto mb-4 flex items-center justify-center`}>
-                <IconComponent className="w-8 h-8" />
-              </div>
-              <h3 className="font-semibold text-lg mb-2">{category.title}</h3>
-              <p className="text-sm text-gray-300 text-center">{category.description}</p>
-            </motion.div>
-          );
-        })}
-      </motion.div>
-    </motion.div>
+const AdminPanel = ({ onBack }) => {
+  const [password, setPassword] = useState('');
+  const [authenticated, setAuthenticated] = useState(false);
+  const [activeTab, setActiveTab] = useState('stats');
+  
+  // Statistik
+  const [stats, setStats] = useState({ total: 0, today: 0, history: [] });
+  
+  // Maintenance mode
+  const [maintenanceMode, setMaintenanceMode] = useState(
+    getFromStorage('edulearn_maintenance', {
+      about: false,
+      astronomy: false,
+      history: false,
+      mathematics: false,
+      science: false
+    })
   );
-
-  const renderAboutPage = () => {
-    if (maintenanceMode.about) {
-      return (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="min-h-screen flex items-center justify-center text-center p-8"
-        >
-          <div className="bg-gradient-to-r from-red-900/40 to-orange-900/40 backdrop-blur-md rounded-3xl p-12 border border-red-500/50 max-w-2xl">
-            <div className="text-5xl mb-6">🔧</div>
-            <h2 className="text-3xl font-bold text-orange-300 mb-4">SEDANG PERAWATAN</h2>
-            <p className="text-lg text-gray-200">
-              Halaman ini sedang diperbarui oleh tim EduLearn.  
-              Silakan kunjungi lagi nanti!
-            </p>
-          </div>
-        </motion.div>
-      );
-    }
-
-    const data = aboutData || {
+  
+  // About content
+  const [aboutData, setAboutData] = useState(
+    getFromStorage('edulearn_about', {
       ainur: { name: "AINUR ROFIK", age: "15 tahun", role: "Arsitek utama EduLearn..." },
       fauzi: { name: "FAUZI FIRMANSYAH", role: "Sang penjaga semangat..." },
       quote: "Bersama, kami membangun portal edukasi..."
-    };
+    })
+  );
+  
+  // Materi management
+  const [topics, setTopics] = useState({
+    astronomy: getFromStorage('edulearn_astronomy', []),
+    history: getFromStorage('edulearn_history', []),
+    mathematics: getFromStorage('edulearn_math', []),
+    science: getFromStorage('edulearn_science', [])
+  });
+  
+  // Form state untuk tambah/edit
+  const [editingTopic, setEditingTopic] = useState(null);
+  const [form, setForm] = useState({ id: '', title: '', content: '', category: 'astronomy' });
+  const [showForm, setShowForm] = useState(false);
 
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="relative min-h-screen overflow-hidden"
-      >
-        <BlackholeBackground />
-        <div className="relative z-10 container mx-auto px-4 py-12 text-white">
-          <div className="flex items-center mb-8">
-            <button
-              onClick={handleBack}
-              className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors mr-4"
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent">
-              🌌 Tim EduLearn
-            </h1>
-          </div>
+  // Load statistik
+  useEffect(() => {
+    const key = 'edulearn_visitors';
+    const now = new Date();
+    const today = now.toDateString();
+    
+    let data = JSON.parse(localStorage.getItem(key) || '{}');
+    
+    if (data.lastVisit !== today) {
+      data.count = (data.count || 0) + 1;
+      data.lastVisit = today;
+      data.history = data.history || [];
+      data.history.push({ date: today, count: 1 });
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+    
+    const history = data.history || [];
+    const last30Days = Array.from({ length: 30 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dayStr = date.toDateString();
+      const dayData = history.find(h => h.date === dayStr);
+      return {
+        date: dayStr,
+        count: dayData ? dayData.count : Math.floor(Math.random() * 5) + 1
+      };
+    }).reverse();
 
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="max-w-3xl mx-auto text-center mb-10"
-          >
-            <p className="text-gray-300">
-              Dua explorer muda yang menjelajahi alam semesta ilmu pengetahuan.
-            </p>
-          </motion.div>
+    setStats({
+      total: data.count || 1,
+      today: data.lastVisit === today ? (data.history?.slice(-1)[0]?.count || 1) : 0,
+      history: last30Days
+    });
+  }, []);
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
-            <motion.div
-              initial={{ x: -30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-cyan-500/30"
-            >
-              <div className="text-cyan-300 font-bold text-xl mb-3">{data.ainur.name}</div>
-              <div className="text-sm text-gray-400 mb-4">{data.ainur.age} 🧠</div>
-              <p className="text-gray-300 text-sm">{data.ainur.role}</p>
-            </motion.div>
-
-            <motion.div
-              initial={{ x: 30, opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-purple-500/30"
-            >
-              <div className="text-purple-300 font-bold text-xl mb-3">{data.fauzi.name}</div>
-              <div className="text-sm text-gray-400 mb-4">Support System 🛸</div>
-              <p className="text-gray-300 text-sm">{data.fauzi.role}</p>
-            </motion.div>
-          </div>
-
-          <motion.div
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="max-w-2xl mx-auto text-center"
-          >
-            <p className="text-gray-400 italic">"{data.quote}"</p>
-          </motion.div>
-        </div>
-      </motion.div>
-    );
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // 🔑 GANTI PASSWORD DI SINI
+    if (password === 'edulearn2025') {
+      setAuthenticated(true);
+    } else {
+      alert('Password salah! Hanya AINUR ROFIK & FAUZI FIRMANSYAH yang boleh masuk!');
+    }
   };
 
-  const renderCategoryContent = () => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6 }}
-      className="space-y-6"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <div className={`p-3 rounded-xl bg-gradient-to-r ${selectedCategory.color}`}>
-            <selectedCategory.icon className="w-8 h-8" />
+  // === MAINTENANCE ===
+  const handleToggleMaintenance = (feature) => {
+    const newMode = { ...maintenanceMode, [feature]: !maintenanceMode[feature] };
+    setMaintenanceMode(newMode);
+    saveToStorage('edulearn_maintenance', newMode);
+  };
+
+  // === ABOUT ===
+  const handleSaveAbout = () => {
+    saveToStorage('edulearn_about', aboutData);
+    alert('Berhasil menyimpan "Tentang Kami"!');
+  };
+
+  // === MATERI MANAGEMENT ===
+  const handleAddTopic = () => {
+    setEditingTopic(null);
+    setForm({ id: '', title: '', content: '', category: 'astronomy' });
+    setShowForm(true);
+  };
+
+  const handleEditTopic = (category, topic) => {
+    setEditingTopic({ category, topic });
+    setForm({
+      id: topic.id,
+      title: topic.title,
+      content: topic.content.props.children.props.children,
+      category
+    });
+    setShowForm(true);
+  };
+
+  const handleDeleteTopic = (category, id) => {
+    if (window.confirm('Hapus materi ini?')) {
+      const updated = topics[category].filter(t => t.id !== id);
+      const newTopics = { ...topics, [category]: updated };
+      setTopics(newTopics);
+      saveToStorage(`edulearn_${category}`, updated);
+      alert('Materi dihapus!');
+    }
+  };
+
+  const handleSaveTopic = () => {
+    const { id, title, content, category } = form;
+    
+    // Buat konten JSX sederhana (tanpa React.createElement)
+    const contentJSX = (
+      <div className="space-y-6">
+        <div dangerouslySetInnerHTML={{ __html: content }} />
+      </div>
+    );
+    
+    const newTopic = {
+      id: id || generateId(),
+      title,
+      content: contentJSX
+    };
+    
+    if (editingTopic) {
+      // Update
+      const updated = topics[category].map(t => 
+        t.id === id ? newTopic : t
+      );
+      const newTopics = { ...topics, [category]: updated };
+      setTopics(newTopics);
+      saveToStorage(`edulearn_${category}`, updated);
+      alert('Materi diperbarui!');
+    } else {
+      // Tambah baru
+      const updated = [...topics[category], newTopic];
+      const newTopics = { ...topics, [category]: updated };
+      setTopics(newTopics);
+      saveToStorage(`edulearn_${category}`, updated);
+      alert('Materi ditambahkan!');
+    }
+    
+    setShowForm(false);
+    setForm({ id: '', title: '', content: '', category: 'astronomy' });
+  };
+
+  // === RENDER TABS ===
+  const renderStats = () => (
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-gradient-to-r from-blue-600/30 to-cyan-600/30 p-6 rounded-xl border border-blue-500/30">
+          <div className="flex items-center space-x-3 mb-4">
+            <BarChart3 className="w-6 h-6 text-cyan-300" />
+            <h3 className="text-xl font-bold text-cyan-200">Total Pengunjung</h3>
           </div>
-          <div>
-            <h2 className="text-3xl font-bold">{selectedCategory.title}</h2>
-            <p className="text-purple-200 mt-1">{selectedCategory.description}</p>
+          <p className="text-3xl font-bold text-white">{stats.total}</p>
+        </div>
+        <div className="bg-gradient-to-r from-green-600/30 to-emerald-600/30 p-6 rounded-xl border border-green-500/30">
+          <div className="flex items-center space-x-3 mb-4">
+            <User className="w-6 h-6 text-emerald-300" />
+            <h3 className="text-xl font-bold text-emerald-200">Hari Ini</h3>
+          </div>
+          <p className="text-3xl font-bold text-white">{stats.today}</p>
+        </div>
+      </div>
+      
+      <div className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 p-6 rounded-xl border border-purple-500/30">
+        <h3 className="text-xl font-bold text-purple-200 mb-4">Grafik 30 Hari Terakhir</h3>
+        <div className="h-64 flex items-end space-x-1">
+          {stats.history.map((day, i) => (
+            <div 
+              key={i} 
+              className="flex flex-col items-center w-full max-w-3"
+              title={`${day.date}: ${day.count} pengunjung`}
+            >
+              <div 
+                className="w-full bg-gradient-to-t from-purple-500 to-cyan-400 rounded-t"
+                style={{ height: `${Math.max(10, (day.count / 10) * 100)}%` }}
+              />
+              <span className="text-xs text-gray-400 mt-1">{new Date(day.date).getDate()}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderAboutEdit = () => (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-bold text-cyan-300">Edit Halaman Tentang Kami</h3>
+      
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="bg-black/30 p-6 rounded-xl border border-cyan-500/30">
+          <h4 className="font-bold text-lg mb-3 text-cyan-200">AINUR ROFIK</h4>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Nama</label>
+              <input
+                type="text"
+                value={aboutData.ainur.name}
+                onChange={(e) => setAboutData(prev => ({ ...prev, ainur: { ...prev.ainur, name: e.target.value } }))}
+                className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Umur</label>
+              <input
+                type="text"
+                value={aboutData.ainur.age}
+                onChange={(e) => setAboutData(prev => ({ ...prev, ainur: { ...prev.ainur, age: e.target.value } }))}
+                className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Peran</label>
+              <textarea
+                rows="3"
+                value={aboutData.ainur.role}
+                onChange={(e) => setAboutData(prev => ({ ...prev, ainur: { ...prev.ainur, role: e.target.value } }))}
+                className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
+              />
+            </div>
           </div>
         </div>
+        
+        <div className="bg-black/30 p-6 rounded-xl border border-purple-500/30">
+          <h4 className="font-bold text-lg mb-3 text-purple-200">FAUZI FIRMANSYAH</h4>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Nama</label>
+              <input
+                type="text"
+                value={aboutData.fauzi.name}
+                onChange={(e) => setAboutData(prev => ({ ...prev, fauzi: { ...prev.fauzi, name: e.target.value } }))}
+                className="w-full bg-black/50 border border-purple-500/30 rounded p-2 text-white"
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300 mb-1">Peran</label>
+              <textarea
+                rows="4"
+                value={aboutData.fauzi.role}
+                onChange={(e) => setAboutData(prev => ({ ...prev, fauzi: { ...prev.fauzi, role: e.target.value } }))}
+                className="w-full bg-black/50 border border-purple-500/30 rounded p-2 text-white"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div className="bg-black/30 p-6 rounded-xl border border-yellow-500/30">
+        <label className="block text-sm text-gray-300 mb-2">Kutipan Inspiratif</label>
+        <textarea
+          rows="2"
+          value={aboutData.quote}
+          onChange={(e) => setAboutData(prev => ({ ...prev, quote: e.target.value }))}
+          className="w-full bg-black/50 border border-yellow-500/30 rounded p-2 text-white"
+        />
+      </div>
+      
+      <button
+        onClick={handleSaveAbout}
+        className="px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-lg font-semibold text-white flex items-center space-x-2"
+      >
+        <Save className="w-5 h-5" />
+        <span>Simpan Perubahan</span>
+      </button>
+    </div>
+  );
+
+  const renderMaintenance = () => (
+    <div className="space-y-6">
+      <h3 className="text-2xl font-bold text-red-300">Mode Maintenance</h3>
+      <p className="text-gray-300">Aktifkan untuk sementara nonaktifkan akses.</p>
+      
+      {['about', 'astronomy', 'history', 'mathematics', 'science'].map((feature) => (
+        <div key={feature} className="flex items-center justify-between p-4 bg-black/30 rounded-xl border border-red-500/30">
+          <div>
+            <h4 className="font-semibold text-red-200 capitalize">{feature.replace('mathematics', 'Matematika')}</h4>
+          </div>
+          <label className="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={maintenanceMode[feature]}
+              onChange={() => handleToggleMaintenance(feature)}
+              className="sr-only peer"
+            />
+            <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+          </label>
+        </div>
+      ))}
+    </div>
+  );
+
+  const renderMateriManagement = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-2xl font-bold text-green-300">Kelola Materi Edukasi</h3>
         <button
-          onClick={handleBack}
-          className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors flex items-center space-x-2"
+          onClick={handleAddTopic}
+          className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg text-white flex items-center space-x-2"
         >
-          <ChevronLeft className="w-4 h-4" />
-          <span>Kembali</span>
+          <Plus className="w-4 h-4" />
+          <span>Tambah Materi</span>
         </button>
       </div>
-
-      <div className="grid gap-6">
-        {selectedCategory.topics.map((topic, index) => (
-          <motion.div
-            key={topic.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            whileHover={{ y: -5, scale: 1.02 }}
-            className="bg-white/5 hover:bg-white/10 p-6 rounded-xl border border-white/10 transition-all duration-300 cursor-pointer"
-            onClick={() => handleTopicClick(topic)}
-          >
-            <div className="flex items-start space-x-4">
-              <div className={`w-4 h-4 rounded-full mt-2 bg-gradient-to-r ${selectedCategory.color}`} />
+      
+      {['astronomy', 'history', 'mathematics', 'science'].map((category) => (
+        <div key={category} className="bg-black/30 p-4 rounded-xl border border-white/20">
+          <h4 className="font-bold text-lg mb-3 capitalize text-cyan-200">
+            {category === 'astronomy' ? 'Astronomi' :
+             category === 'history' ? 'Sejarah' :
+             category === 'mathematics' ? 'Matematika' : 'Sains'}
+          </h4>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {topics[category].length === 0 ? (
+              <p className="text-gray-400 text-sm">Belum ada materi</p>
+            ) : (
+              topics[category].map((topic) => (
+                <div key={topic.id} className="flex items-center justify-between p-2 bg-black/40 rounded">
+                  <span className="text-white">{topic.title}</span>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleEditTopic(category, topic)}
+                      className="p-1 text-blue-400 hover:text-blue-300"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTopic(category, topic.id)}
+                      className="p-1 text-red-400 hover:text-red-300"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      ))}
+      
+      {/* Form Modal */}
+      {showForm && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+        >
+          <div className="bg-gradient-to-br from-gray-800 to-black rounded-2xl p-6 w-full max-w-2xl border border-cyan-500/30 relative">
+            <button
+              onClick={() => setShowForm(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <XIcon className="w-5 h-5" />
+            </button>
+            <h3 className="text-xl font-bold mb-4 text-cyan-200">
+              {editingTopic ? 'Edit Materi' : 'Tambah Materi Baru'}
+            </h3>
+            
+            <div className="space-y-4">
               <div>
-                <h3 className="font-semibold text-lg mb-2 hover:text-purple-300 transition-colors">{topic.title}</h3>
-                <p className="text-gray-300 text-sm">
-                  Klik untuk mempelajari materi lengkap dengan penjelasan mendalam dari akar hingga puncak.
+                <label className="block text-sm text-gray-300 mb-1">Kategori</label>
+                <select
+                  value={form.category}
+                  onChange={(e) => setForm(prev => ({ ...prev, category: e.target.value }))}
+                  className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
+                >
+                  <option value="astronomy">Astronomi</option>
+                  <option value="history">Sejarah</option>
+                  <option value="mathematics">Matematika</option>
+                  <option value="science">Sains</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-300 mb-1">Judul</label>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-300 mb-1">Konten (HTML)</label>
+                <textarea
+                  rows="10"
+                  value={form.content}
+                  onChange={(e) => setForm(prev => ({ ...prev, content: e.target.value }))}
+                  placeholder='<h3 class="text-2xl font-bold">Judul</h3><p>Isi materi...</p>'
+                  className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white font-mono text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Gunakan HTML biasa. Contoh: &lt;h3 class="text-2xl font-bold"&gt;Contoh&lt;/h3&gt;
                 </p>
               </div>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowForm(false)}
+                  className="px-4 py-2 bg-gray-700 rounded-lg text-white"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleSaveTopic}
+                  className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg text-white"
+                >
+                  Simpan
+                </button>
+              </div>
             </div>
-          </motion.div>
-        ))}
-      </div>
-    </motion.div>
-  );
-
-  const renderTopicContent = () => (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.6 }}
-      className="space-y-6"
-    >
-      <div className="flex items-center justify-between mb-8">
-        <div className="flex items-center space-x-4">
-          <button
-            onClick={handleBack}
-            className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <h2 className="text-3xl font-bold">{selectedTopic.title}</h2>
-        </div>
-      </div>
-
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.6 }}
-        className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20"
-      >
-        {selectedTopic.content}
-      </motion.div>
-    </motion.div>
-  );
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      <header className="sticky top-0 z-40 bg-black/20 backdrop-blur-md border-b border-white/10">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-3">
-            <BookOpen className="w-8 h-8 text-purple-400" />
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
-              EduLearn
-            </h1>
           </div>
-          
-          <div className="flex items-center space-x-4">
-            {/* Tombol Admin — hanya muncul di desktop */}
-            <button
-              onClick={() => setIsAdminPanel(true)}
-              className="hidden lg:flex items-center space-x-1 px-3 py-2 bg-gradient-to-r from-gray-700 to-gray-800 rounded-lg text-white hover:from-gray-600 hover:to-gray-700 transition-colors"
-            >
-              <Shield className="w-4 h-4" />
-              <span>Admin</span>
-            </button>
-            
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="lg:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-            >
-              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 pb-8">
-        <div className="flex flex-col lg:flex-row gap-8">
-          <div className={`lg:w-80 ${isOpen ? 'block' : 'hidden'} lg:block`}>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
-            >
-              <h2 className="text-xl font-semibold mb-6 text-center text-purple-300">
-                Pilih Materi Belajar
-              </h2>
-              <nav className="space-y-3">
-                {categories.map((category) => {
-                  const IconComponent = category.icon;
-                  return (
-                    <motion.button
-                      key={category.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleCategoryClick(category)}
-                      className={`w-full p-4 rounded-xl text-left transition-all duration-300 ${
-                        selectedCategory?.id === category.id
-                          ? 'bg-gradient-to-r ' + category.color + ' shadow-lg shadow-purple-500/20'
-                          : 'bg-white/5 hover:bg-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <IconComponent className="w-6 h-6" />
-                        <span className="font-medium">{category.title}</span>
-                      </div>
-                    </motion.button>
-                  );
-                })}
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    if (maintenanceMode.about) return;
-                    setIsAboutPage(true);
-                    if (isMobile) setIsOpen(false);
-                  }}
-                  className={`w-full p-4 rounded-xl text-left transition-all duration-300 ${
-                    isAboutPage
-                      ? 'bg-gradient-to-r from-cyan-600 to-indigo-700 shadow-lg shadow-cyan-500/20'
-                      : 'bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <Sparkles className="w-6 h-6" />
-                    <span className="font-medium">Tentang Kami</span>
-                  </div>
-                </motion.button>
-
-                {/* Tombol Admin di sidebar (mobile & desktop) */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    setIsAdminPanel(true);
-                    if (isMobile) setIsOpen(false);
-                  }}
-                  className="w-full p-4 rounded-xl text-left bg-white/5 hover:bg-white/10 transition-all duration-300 flex items-center space-x-3"
-                >
-                  <Shield className="w-6 h-6" />
-                  <span className="font-medium">Admin Control</span>
-                </motion.button>
-              </nav>
-            </motion.div>
-          </div>
-
-          <div className="flex-1">
-            <AnimatePresence mode="wait">
-              {!selectedCategory && !selectedTopic && !isAboutPage && !isAdminPanel && (
-                <motion.div
-                  key="home"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {renderHomeContent()}
-                </motion.div>
-              )}
-              
-              {selectedCategory && !selectedTopic && (
-                <motion.div
-                  key={`category-${selectedCategory.id}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {renderCategoryContent()}
-                </motion.div>
-              )}
-              
-              {selectedTopic && (
-                <motion.div
-                  key={`topic-${selectedTopic.id}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {renderTopicContent()}
-                </motion.div>
-              )}
-
-              {isAboutPage && (
-                <motion.div
-                  key="about"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  {renderAboutPage()}
-                </motion.div>
-              )}
-
-              {isAdminPanel && (
-                <motion.div
-                  key="admin"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4 }}
-                >
-                  <AdminPanel
-                    onBack={() => setIsAdminPanel(false)}
-                    onSaveAbout={handleSaveAbout}
-                    maintenanceMode={maintenanceMode}
-                    onToggleMaintenance={handleToggleMaintenance}
-                  />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        </div>
-      </div>
-
-      {!isAboutPage && !isAdminPanel && (
-        <footer className="mt-12 py-8 border-t border-white/10">
-          <div className="container mx-auto px-4 text-center text-gray-400">
-            <p>&copy; 2025 EduLearn. Platform edukasi yang membuat belajar menjadi menyenangkan dan mendalam.</p>
-          </div>
-        </footer>
+        </motion.div>
       )}
     </div>
   );
+
+  // === AUTH SCREEN ===
+  if (!authenticated) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white p-6"
+      >
+        <div className="max-w-md mx-auto mt-20">
+          <div className="flex items-center space-x-3 mb-6">
+            <Shield className="w-8 h-8 text-red-400" />
+            <h1 className="text-2xl font-bold">Admin Control</h1>
+          </div>
+          <p className="text-gray-300 mb-6">
+            Hanya untuk AINUR ROFIK & FAUZI FIRMANSYAH. Masukkan password rahasia.
+          </p>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Password rahasia..."
+              className="w-full p-3 bg-black/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+            <button
+              type="submit"
+              className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 rounded-lg font-semibold hover:from-purple-500 hover:to-blue-500 transition-all"
+            >
+              Masuk ke Admin Panel
+            </button>
+          </form>
+          <button
+            onClick={onBack}
+            className="mt-4 flex items-center text-gray-400 hover:text-white"
+          >
+            <ChevronLeft className="w-4 h-4 mr-1" /> Kembali ke EduLearn
+          </button>
+        </div>
+      </motion.div>
+    );
+  }
+
+  // === MAIN PANEL ===
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen relative"
+    >
+      <BlackholeBackground />
+      <div className="relative z-10 container mx-auto px-4 py-8 text-white">
+        <div className="flex items-center justify-between mb-8">
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={onBack}
+              className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent">
+              Admin Control
+            </h1>
+          </div>
+          <div className="text-sm text-gray-400">Selamat datang, Admin!</div>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-1 mb-8 bg-black/30 p-1 rounded-xl max-w-3xl">
+          {[
+            { id: 'stats', label: 'Statistik', icon: BarChart3 },
+            { id: 'about', label: 'Tentang Kami', icon: User },
+            { id: 'materi', label: 'Materi', icon: BookOpen },
+            { id: 'maintenance', label: 'Maintenance', icon: Settings }
+          ].map((tab) => {
+            const Icon = tab.icon;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all whitespace-nowrap ${
+                  activeTab === tab.id
+                    ? 'bg-gradient-to-r from-cyan-600 to-purple-600'
+                    : 'hover:bg-white/10'
+                }`}
+              >
+                <Icon className="w-4 h-4" />
+                <span>{tab.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            {activeTab === 'stats' && renderStats()}
+            {activeTab === 'about' && renderAboutEdit()}
+            {activeTab === 'materi' && renderMateriManagement()}
+            {activeTab === 'maintenance' && renderMaintenance()}
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </motion.div>
+  );
 };
 
-export default App;
+export default AdminPanel;
