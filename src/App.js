@@ -1,5 +1,6 @@
+// src/App.js
 import React, { useState, useEffect } from 'react';
-import { Menu, X, BookOpen, Star, History, Calculator, FlaskConical, ChevronLeft, Sparkles, Shield } from 'lucide-react';
+import { Menu, X, BookOpen, Star, History, Calculator, FlaskConical, ChevronLeft, Sparkles, Shield, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // 🔥 IMPOR DATA
@@ -22,12 +23,13 @@ const App = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [currentQuote, setCurrentQuote] = useState(0);
   const [aboutData, setAboutData] = useState(null);
-  const [maintenanceMode, setMaintenanceMode] = useState({
-    about: false
-  });
+  const [maintenanceMode, setMaintenanceMode] = useState(
+    JSON.parse(localStorage.getItem('edulearn_maintenance') || '{"about": false, "astronomy": false, "history": false, "mathematics": false, "science": false}')
+  );
+  const [activeMenu, setActiveMenu] = useState('home');
 
   useEffect(() => {
-    // Load about data from localStorage
+    // Load about data
     const saved = localStorage.getItem('edulearn_about');
     if (saved) {
       setAboutData(JSON.parse(saved));
@@ -88,6 +90,7 @@ const App = () => {
   const handleCategoryClick = (category) => {
     setSelectedCategory(category);
     setSelectedTopic(null);
+    setActiveMenu(category.id);
     if (isMobile) setIsOpen(false);
   };
 
@@ -100,22 +103,20 @@ const App = () => {
       setSelectedTopic(null);
     } else if (selectedCategory) {
       setSelectedCategory(null);
+      setActiveMenu('home');
     } else if (isAboutPage) {
       setIsAboutPage(false);
+      setActiveMenu('about');
     } else if (isAdminPanel) {
       setIsAdminPanel(false);
+      setActiveMenu('admin');
     }
   };
 
-  const handleSaveAbout = (data) => {
-    setAboutData(data);
-  };
-
   const handleToggleMaintenance = (feature) => {
-    setMaintenanceMode(prev => ({
-      ...prev,
-      [feature]: !prev[feature]
-    }));
+    const newMode = { ...maintenanceMode, [feature]: !maintenanceMode[feature] };
+    setMaintenanceMode(newMode);
+    localStorage.setItem('edulearn_maintenance', JSON.stringify(newMode));
   };
 
   const renderHomeContent = () => (
@@ -204,7 +205,7 @@ const App = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.8 + index * 0.1 }}
               whileHover={{ y: -10, scale: 1.05 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20 hover:bg-white/20 cursor-pointer transition-all duration-300"
+              className="bg-white/5 hover:bg-white/10 p-6 rounded-xl border border-white/10 cursor-pointer transition-all duration-300"
               onClick={() => handleCategoryClick(category)}
             >
               <div className={`w-16 h-16 rounded-2xl bg-gradient-to-r ${category.color} mx-auto mb-4 flex items-center justify-center`}>
@@ -396,8 +397,122 @@ const App = () => {
     </motion.div>
   );
 
+  const renderSidebar = () => (
+    <motion.div
+      initial={{ x: -300 }}
+      animate={{ x: 0 }}
+      transition={{ type: "spring", damping: 20, stiffness: 300 }}
+      className={`lg:w-80 ${isOpen ? 'block' : 'hidden'} lg:block fixed top-0 left-0 h-screen bg-black/40 backdrop-blur-md p-6 border-r border-white/10 z-50`}
+    >
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center space-x-3">
+          <BookOpen className="w-8 h-8 text-purple-400" />
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent">
+            EduLearn
+          </h1>
+        </div>
+        <button
+          onClick={() => setIsOpen(false)}
+          className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors"
+        >
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+
+      <nav className="space-y-3 overflow-y-auto h-[calc(100vh-12rem)]">
+        {/* Home */}
+        <motion.button
+          key="home"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => {
+            setActiveMenu('home');
+            setSelectedCategory(null);
+            setSelectedTopic(null);
+            setIsAboutPage(false);
+            setIsAdminPanel(false);
+            if (isMobile) setIsOpen(false);
+          }}
+          className={`w-full p-4 rounded-xl text-left transition-all duration-300 ${
+            activeMenu === 'home'
+              ? 'bg-gradient-to-r from-purple-600 to-blue-600 shadow-lg shadow-purple-500/20'
+              : 'bg-white/5 hover:bg-white/10'
+          }`}
+        >
+          <div className="flex items-center space-x-3">
+            <BookOpen className="w-6 h-6" />
+            <span className="font-medium">Beranda</span>
+          </div>
+        </motion.button>
+
+        {/* Categories */}
+        {categories.map((category) => {
+          const IconComponent = category.icon;
+          return (
+            <motion.button
+              key={category.id}
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => {
+                handleCategoryClick(category);
+                setActiveMenu(category.id);
+              }}
+              className={`w-full p-4 rounded-xl text-left transition-all duration-300 ${
+                activeMenu === category.id
+                  ? 'bg-gradient-to-r ' + category.color + ' shadow-lg shadow-purple-500/20'
+                  : 'bg-white/5 hover:bg-white/10'
+              }`}
+            >
+              <div className="flex items-center space-x-3">
+                <IconComponent className="w-6 h-6" />
+                <span className="font-medium">{category.title}</span>
+              </div>
+            </motion.button>
+          );
+        })}
+
+        {/* About */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => {
+            if (maintenanceMode.about) return;
+            setIsAboutPage(true);
+            setActiveMenu('about');
+            if (isMobile) setIsOpen(false);
+          }}
+          className={`w-full p-4 rounded-xl text-left transition-all duration-300 ${
+            activeMenu === 'about'
+              ? 'bg-gradient-to-r from-cyan-600 to-indigo-700 shadow-lg shadow-cyan-500/20'
+              : 'bg-white/5 hover:bg-white/10'
+          }`}
+        >
+          <div className="flex items-center space-x-3">
+            <Sparkles className="w-6 h-6" />
+            <span className="font-medium">Tentang Kami</span>
+          </div>
+        </motion.button>
+
+        {/* Admin Control */}
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => {
+            setIsAdminPanel(true);
+            setActiveMenu('admin');
+            if (isMobile) setIsOpen(false);
+          }}
+          className="w-full p-4 rounded-xl text-left bg-white/5 hover:bg-white/10 transition-all duration-300 flex items-center space-x-3"
+        >
+          <Shield className="w-6 h-6" />
+          <span className="font-medium">Admin Control</span>
+        </motion.button>
+      </nav>
+    </motion.div>
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white relative">
       <header className="sticky top-0 z-40 bg-black/20 backdrop-blur-md border-b border-white/10">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-3">
@@ -429,75 +544,7 @@ const App = () => {
 
       <div className="container mx-auto px-4 pb-8">
         <div className="flex flex-col lg:flex-row gap-8">
-          <div className={`lg:w-80 ${isOpen ? 'block' : 'hidden'} lg:block`}>
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              className="bg-white/10 backdrop-blur-md rounded-2xl p-6 border border-white/20"
-            >
-              <h2 className="text-xl font-semibold mb-6 text-center text-purple-300">
-                Pilih Materi Belajar
-              </h2>
-              <nav className="space-y-3">
-                {categories.map((category) => {
-                  const IconComponent = category.icon;
-                  return (
-                    <motion.button
-                      key={category.id}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      onClick={() => handleCategoryClick(category)}
-                      className={`w-full p-4 rounded-xl text-left transition-all duration-300 ${
-                        selectedCategory?.id === category.id
-                          ? 'bg-gradient-to-r ' + category.color + ' shadow-lg shadow-purple-500/20'
-                          : 'bg-white/5 hover:bg-white/10'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-3">
-                        <IconComponent className="w-6 h-6" />
-                        <span className="font-medium">{category.title}</span>
-                      </div>
-                    </motion.button>
-                  );
-                })}
-
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    if (maintenanceMode.about) return;
-                    setIsAboutPage(true);
-                    if (isMobile) setIsOpen(false);
-                  }}
-                  className={`w-full p-4 rounded-xl text-left transition-all duration-300 ${
-                    isAboutPage
-                      ? 'bg-gradient-to-r from-cyan-600 to-indigo-700 shadow-lg shadow-cyan-500/20'
-                      : 'bg-white/5 hover:bg-white/10'
-                  }`}
-                >
-                  <div className="flex items-center space-x-3">
-                    <Sparkles className="w-6 h-6" />
-                    <span className="font-medium">Tentang Kami</span>
-                  </div>
-                </motion.button>
-
-                {/* Tombol Admin di sidebar (mobile & desktop) */}
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={() => {
-                    setIsAdminPanel(true);
-                    if (isMobile) setIsOpen(false);
-                  }}
-                  className="w-full p-4 rounded-xl text-left bg-white/5 hover:bg-white/10 transition-all duration-300 flex items-center space-x-3"
-                >
-                  <Shield className="w-6 h-6" />
-                  <span className="font-medium">Admin Control</span>
-                </motion.button>
-              </nav>
-            </motion.div>
-          </div>
+          {renderSidebar()}
 
           <div className="flex-1">
             <AnimatePresence mode="wait">
@@ -558,8 +605,14 @@ const App = () => {
                   transition={{ duration: 0.4 }}
                 >
                   <AdminPanel
-                    onBack={() => setIsAdminPanel(false)}
-                    onSaveAbout={handleSaveAbout}
+                    onBack={() => {
+                      setIsAdminPanel(false);
+                      setActiveMenu('admin');
+                    }}
+                    onSaveAbout={(data) => {
+                      setAboutData(data);
+                      localStorage.setItem('edulearn_about', JSON.stringify(data));
+                    }}
                     maintenanceMode={maintenanceMode}
                     onToggleMaintenance={handleToggleMaintenance}
                   />
