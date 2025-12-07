@@ -1,21 +1,38 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, BookOpen, Star, History, Calculator, FlaskConical, ChevronLeft, Sparkles } from 'lucide-react';
+import { Menu, X, BookOpen, Star, History, Calculator, FlaskConical, ChevronLeft, Sparkles, Shield } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// 🔥 IMPOR DATA DARI FILE TERPISAH
+// 🔥 IMPOR DATA
 import quotes from './data/quotes.json';
 import { astronomyTopics } from './data/astronomyTopics';
 import { historyTopics } from './data/historyTopics';
 import { mathTopics } from './data/mathTopics';
 import { scienceTopics } from './data/scienceTopics';
 
+// 🔥 IMPOR KOMPONEN BARU
+import BlackholeBackground from './components/BlackholeBackground';
+import AdminPanel from './admin/AdminPanel';
+
 const App = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedTopic, setSelectedTopic] = useState(null);
   const [isAboutPage, setIsAboutPage] = useState(false);
+  const [isAdminPanel, setIsAdminPanel] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [currentQuote, setCurrentQuote] = useState(0);
+  const [aboutData, setAboutData] = useState(null);
+  const [maintenanceMode, setMaintenanceMode] = useState({
+    about: false
+  });
+
+  useEffect(() => {
+    // Load about data from localStorage
+    const saved = localStorage.getItem('edulearn_about');
+    if (saved) {
+      setAboutData(JSON.parse(saved));
+    }
+  }, []);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -85,7 +102,20 @@ const App = () => {
       setSelectedCategory(null);
     } else if (isAboutPage) {
       setIsAboutPage(false);
+    } else if (isAdminPanel) {
+      setIsAdminPanel(false);
     }
+  };
+
+  const handleSaveAbout = (data) => {
+    setAboutData(data);
+  };
+
+  const handleToggleMaintenance = (feature) => {
+    setMaintenanceMode(prev => ({
+      ...prev,
+      [feature]: !prev[feature]
+    }));
   };
 
   const renderHomeContent = () => (
@@ -189,6 +219,101 @@ const App = () => {
     </motion.div>
   );
 
+  const renderAboutPage = () => {
+    if (maintenanceMode.about) {
+      return (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="min-h-screen flex items-center justify-center text-center p-8"
+        >
+          <div className="bg-gradient-to-r from-red-900/40 to-orange-900/40 backdrop-blur-md rounded-3xl p-12 border border-red-500/50 max-w-2xl">
+            <div className="text-5xl mb-6">🔧</div>
+            <h2 className="text-3xl font-bold text-orange-300 mb-4">SEDANG PERAWATAN</h2>
+            <p className="text-lg text-gray-200">
+              Halaman ini sedang diperbarui oleh tim EduLearn.  
+              Silakan kunjungi lagi nanti!
+            </p>
+          </div>
+        </motion.div>
+      );
+    }
+
+    const data = aboutData || {
+      ainur: { name: "AINUR ROFIK", age: "15 tahun", role: "Arsitek utama EduLearn..." },
+      fauzi: { name: "FAUZI FIRMANSYAH", role: "Sang penjaga semangat..." },
+      quote: "Bersama, kami membangun portal edukasi..."
+    };
+
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="relative min-h-screen overflow-hidden"
+      >
+        <BlackholeBackground />
+        <div className="relative z-10 container mx-auto px-4 py-12 text-white">
+          <div className="flex items-center mb-8">
+            <button
+              onClick={handleBack}
+              className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors mr-4"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent">
+              🌌 Tim EduLearn
+            </h1>
+          </div>
+
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="max-w-3xl mx-auto text-center mb-10"
+          >
+            <p className="text-gray-300">
+              Dua explorer muda yang menjelajahi alam semesta ilmu pengetahuan.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
+            <motion.div
+              initial={{ x: -30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-cyan-500/30"
+            >
+              <div className="text-cyan-300 font-bold text-xl mb-3">{data.ainur.name}</div>
+              <div className="text-sm text-gray-400 mb-4">{data.ainur.age} 🧠</div>
+              <p className="text-gray-300 text-sm">{data.ainur.role}</p>
+            </motion.div>
+
+            <motion.div
+              initial={{ x: 30, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-purple-500/30"
+            >
+              <div className="text-purple-300 font-bold text-xl mb-3">{data.fauzi.name}</div>
+              <div className="text-sm text-gray-400 mb-4">Support System 🛸</div>
+              <p className="text-gray-300 text-sm">{data.fauzi.role}</p>
+            </motion.div>
+          </div>
+
+          <motion.div
+            initial={{ y: 30, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ delay: 0.5 }}
+            className="max-w-2xl mx-auto text-center"
+          >
+            <p className="text-gray-400 italic">"{data.quote}"</p>
+          </motion.div>
+        </div>
+      </motion.div>
+    );
+  };
+
   const renderCategoryContent = () => (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -271,105 +396,6 @@ const App = () => {
     </motion.div>
   );
 
-  const renderAboutPage = () => (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="relative min-h-screen overflow-hidden"
-    >
-      <div className="absolute inset-0">
-        <div className="absolute top-1/2 left-1/2 w-[600px] h-[600px] -translate-x-1/2 -translate-y-1/2">
-          <div className="absolute inset-0 rounded-full border border-cyan-500/30 animate-pulse"></div>
-          <div className="absolute top-1/2 left-1/2 w-[400px] h-[400px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-purple-500/40 animate-spin" style={{ animationDuration: '40s' }}></div>
-          <div className="absolute top-1/2 left-1/2 w-[200px] h-[200px] -translate-x-1/2 -translate-y-1/2 bg-gradient-to-br from-gray-900 to-black rounded-full blur-sm"></div>
-          {[...Array(30)].map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-white rounded-full opacity-60"
-              style={{
-                top: `${50 + 200 * Math.sin(i * 0.3)}%`,
-                left: `${50 + 200 * Math.cos(i * 0.3)}%`,
-                animation: `float ${10 + i}s infinite ease-in-out`,
-              }}
-            />
-          ))}
-        </div>
-      </div>
-
-      <div className="relative z-10 container mx-auto px-4 py-12 text-white">
-        <div className="flex items-center mb-8">
-          <button
-            onClick={handleBack}
-            className="p-2 bg-white/10 hover:bg-white/20 rounded-lg transition-colors mr-4"
-          >
-            <ChevronLeft className="w-5 h-5" />
-          </button>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-300 to-purple-300 bg-clip-text text-transparent">
-            🌌 Tim EduLearn
-          </h1>
-        </div>
-
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.2 }}
-          className="max-w-3xl mx-auto text-center mb-10"
-        >
-          <p className="text-gray-300">
-            Dua explorer muda yang menjelajahi alam semesta ilmu pengetahuan.
-          </p>
-        </motion.div>
-
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-12">
-          <motion.div
-            initial={{ x: -30, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-cyan-500/30"
-          >
-            <div className="text-cyan-300 font-bold text-xl mb-3">AINUR ROFIK</div>
-            <div className="text-sm text-gray-400 mb-4">Umur: 15 tahun 🧠</div>
-            <p className="text-gray-300 text-sm">
-              Arsitek utama EduLearn. Pencinta astronomi, matematika, dan sejarah. Percaya bahwa ilmu adalah cahaya di tengah kegelapan kosmos.
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ x: 30, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="bg-black/40 backdrop-blur-sm p-6 rounded-2xl border border-purple-500/30"
-          >
-            <div className="text-purple-300 font-bold text-xl mb-3">FAUZI FIRMANSYAH</div>
-            <div className="text-sm text-gray-400 mb-4">Support System 🛸</div>
-            <p className="text-gray-300 text-sm">
-              Sang penjaga semangat. Selalu siap memberi dorongan, ide, dan energi positif. Tanpanya, misi ini tak akan berjalan.
-            </p>
-          </motion.div>
-        </div>
-
-        <motion.div
-          initial={{ y: 30, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.5 }}
-          className="max-w-2xl mx-auto text-center"
-        >
-          <p className="text-gray-400 italic">
-            "Bersama, kami membangun portal edukasi yang menginspirasi — seperti dua bintang yang saling mengorbit, menciptakan cahaya bersama."
-          </p>
-        </motion.div>
-      </div>
-
-      <style jsx>{`
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-      `}</style>
-    </motion.div>
-  );
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <header className="sticky top-0 z-40 bg-black/20 backdrop-blur-md border-b border-white/10">
@@ -381,12 +407,23 @@ const App = () => {
             </h1>
           </div>
           
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+          <div className="flex items-center space-x-4">
+            {/* Tombol Admin — hanya muncul di desktop */}
+            <button
+              onClick={() => setIsAdminPanel(true)}
+              className="hidden lg:flex items-center space-x-1 px-3 py-2 bg-gradient-to-r from-gray-700 to-gray-800 rounded-lg text-white hover:from-gray-600 hover:to-gray-700 transition-colors"
+            >
+              <Shield className="w-4 h-4" />
+              <span>Admin</span>
+            </button>
+            
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="lg:hidden p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+            >
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
       </header>
 
@@ -424,10 +461,12 @@ const App = () => {
                     </motion.button>
                   );
                 })}
+
                 <motion.button
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => {
+                    if (maintenanceMode.about) return;
                     setIsAboutPage(true);
                     if (isMobile) setIsOpen(false);
                   }}
@@ -442,13 +481,27 @@ const App = () => {
                     <span className="font-medium">Tentang Kami</span>
                   </div>
                 </motion.button>
+
+                {/* Tombol Admin di sidebar (mobile & desktop) */}
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => {
+                    setIsAdminPanel(true);
+                    if (isMobile) setIsOpen(false);
+                  }}
+                  className="w-full p-4 rounded-xl text-left bg-white/5 hover:bg-white/10 transition-all duration-300 flex items-center space-x-3"
+                >
+                  <Shield className="w-6 h-6" />
+                  <span className="font-medium">Admin Control</span>
+                </motion.button>
               </nav>
             </motion.div>
           </div>
 
           <div className="flex-1">
             <AnimatePresence mode="wait">
-              {!selectedCategory && !selectedTopic && !isAboutPage && (
+              {!selectedCategory && !selectedTopic && !isAboutPage && !isAdminPanel && (
                 <motion.div
                   key="home"
                   initial={{ opacity: 0 }}
@@ -495,12 +548,29 @@ const App = () => {
                   {renderAboutPage()}
                 </motion.div>
               )}
+
+              {isAdminPanel && (
+                <motion.div
+                  key="admin"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4 }}
+                >
+                  <AdminPanel
+                    onBack={() => setIsAdminPanel(false)}
+                    onSaveAbout={handleSaveAbout}
+                    maintenanceMode={maintenanceMode}
+                    onToggleMaintenance={handleToggleMaintenance}
+                  />
+                </motion.div>
+              )}
             </AnimatePresence>
           </div>
         </div>
       </div>
 
-      {!isAboutPage && (
+      {!isAboutPage && !isAdminPanel && (
         <footer className="mt-12 py-8 border-t border-white/10">
           <div className="container mx-auto px-4 text-center text-gray-400">
             <p>&copy; 2025 EduLearn. Platform edukasi yang membuat belajar menjadi menyenangkan dan mendalam.</p>
