@@ -1,40 +1,50 @@
 // src/admin/AdminPanel.js
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { ChevronLeft, User, BarChart3, BookOpen, Settings, Shield, Save, Trash2, Plus } from 'lucide-react';
-
-// Impor data & fungsi
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, User, BarChart3, Settings, Shield, Save } from 'lucide-react';
+import BlackholeBackground from '../components/BlackholeBackground';
 import { getVisitorStats } from '../utils/visitorCounter';
-import { aboutContent } from '../data/aboutContent';
-import { astronomyTopics } from '../data/astronomyTopics';
-import { historyTopics } from '../data/historyTopics';
-import { mathTopics } from '../data/mathTopics';
-import { scienceTopics } from '../data/scienceTopics';
 
-const AdminPanel = ({ onBack, onSaveAbout, onSaveTopics, maintenanceMode, onToggleMaintenance }) => {
+const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance }) => {
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('stats');
-  
-  // Form state
-  const [ainurName, setAinurName] = useState(aboutContent.ainur.name);
-  const [ainurAge, setAinurAge] = useState(aboutContent.ainur.age);
-  const [ainurRole, setAinurRole] = useState(aboutContent.ainur.role);
-  const [fauziName, setFauziName] = useState(aboutContent.fauzi.name);
-  const [fauziRole, setFauziRole] = useState(aboutContent.fauzi.role);
-  const [quote, setQuote] = useState(aboutContent.quote);
-  
-  // Statistik
+  const [ainurName, setAinurName] = useState('');
+  const [ainurAge, setAinurAge] = useState('');
+  const [ainurRole, setAinurRole] = useState('');
+  const [fauziName, setFauziName] = useState('');
+  const [fauziRole, setFauziRole] = useState('');
+  const [quote, setQuote] = useState('');
   const [stats, setStats] = useState({ total: 0, today: 0, history: [] });
 
+  // Load data about
   useEffect(() => {
+    const saved = localStorage.getItem('edulearn_about');
+    if (saved) {
+      const data = JSON.parse(saved);
+      setAinurName(data.ainur.name);
+      setAinurAge(data.ainur.age);
+      setAinurRole(data.ainur.role);
+      setFauziName(data.fauzi.name);
+      setFauziRole(data.fauzi.role);
+      setQuote(data.quote);
+    } else {
+      // Default
+      setAinurName("AINUR ROFIK");
+      setAinurAge("15 tahun");
+      setAinurRole("Arsitek utama EduLearn...");
+      setFauziName("FAUZI FIRMANSYAH");
+      setFauziRole("Sang penjaga semangat...");
+      setQuote("Bersama, kami membangun portal edukasi...");
+    }
+    
     const savedStats = getVisitorStats();
     setStats(savedStats);
   }, []);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    // Ganti dengan password rahasia kamu & Fauzi
+    // 🔑 GANTI PASSWORD DI SINI
     if (password === 'edulearn2025') {
       setAuthenticated(true);
     } else {
@@ -43,11 +53,13 @@ const AdminPanel = ({ onBack, onSaveAbout, onSaveTopics, maintenanceMode, onTogg
   };
 
   const handleSaveAbout = () => {
-    onSaveAbout({
+    const newData = {
       ainur: { name: ainurName, age: ainurAge, role: ainurRole },
       fauzi: { name: fauziName, role: fauziRole },
       quote
-    });
+    };
+    localStorage.setItem('edulearn_about', JSON.stringify(newData));
+    onSaveAbout(newData);
     alert('Berhasil menyimpan perubahan "Tentang Kami"!');
   };
 
@@ -197,8 +209,6 @@ const AdminPanel = ({ onBack, onSaveAbout, onSaveTopics, maintenanceMode, onTogg
             <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
           </label>
         </div>
-        
-        {/* Tambahkan maintenance untuk kategori lain jika mau */}
       </div>
       
       {maintenanceMode.about && (
@@ -256,9 +266,10 @@ const AdminPanel = ({ onBack, onSaveAbout, onSaveTopics, maintenanceMode, onTogg
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white"
+      className="min-h-screen relative"
     >
-      <div className="container mx-auto px-4 py-8">
+      <BlackholeBackground />
+      <div className="relative z-10 container mx-auto px-4 py-8 text-white">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center space-x-3">
             <button
@@ -271,12 +282,9 @@ const AdminPanel = ({ onBack, onSaveAbout, onSaveTopics, maintenanceMode, onTogg
               Admin Control
             </h1>
           </div>
-          <div className="text-sm text-gray-400">
-            Selamat datang, Admin!
-          </div>
+          <div className="text-sm text-gray-400">Selamat datang, Admin!</div>
         </div>
 
-        {/* Tab Navigation */}
         <div className="flex space-x-1 mb-8 bg-black/30 p-1 rounded-xl max-w-2xl">
           {[
             { id: 'stats', label: 'Statistik', icon: BarChart3 },
@@ -301,7 +309,6 @@ const AdminPanel = ({ onBack, onSaveAbout, onSaveTopics, maintenanceMode, onTogg
           })}
         </div>
 
-        {/* Content */}
         <AnimatePresence mode="wait">
           <motion.div
             key={activeTab}
