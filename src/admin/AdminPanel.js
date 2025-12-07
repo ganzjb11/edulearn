@@ -1,45 +1,97 @@
 // src/admin/AdminPanel.js
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, User, BarChart3, Settings, Shield, Save } from 'lucide-react';
+import { ChevronLeft, User, BarChart3, BookOpen, Settings, Shield, Save, Trash2, Plus, Edit3, X as XIcon } from 'lucide-react';
 import BlackholeBackground from '../components/BlackholeBackground';
-import { getVisitorStats } from '../utils/visitorCounter';
 
-const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance }) => {
+// Helper: Simpan data ke localStorage
+const saveToStorage = (key, data) => {
+  localStorage.setItem(key, JSON.stringify(data));
+};
+
+// Helper: Ambil data dari localStorage
+const getFromStorage = (key, fallback) => {
+  const data = localStorage.getItem(key);
+  return data ? JSON.parse(data) : fallback;
+};
+
+// Helper: Generate ID unik
+const generateId = () => Math.random().toString(36).substr(2, 9);
+
+const AdminPanel = ({ onBack }) => {
   const [password, setPassword] = useState('');
   const [authenticated, setAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('stats');
-  const [ainurName, setAinurName] = useState('');
-  const [ainurAge, setAinurAge] = useState('');
-  const [ainurRole, setAinurRole] = useState('');
-  const [fauziName, setFauziName] = useState('');
-  const [fauziRole, setFauziRole] = useState('');
-  const [quote, setQuote] = useState('');
+  
+  // Statistik
   const [stats, setStats] = useState({ total: 0, today: 0, history: [] });
+  
+  // Maintenance mode
+  const [maintenanceMode, setMaintenanceMode] = useState(
+    getFromStorage('edulearn_maintenance', {
+      about: false,
+      astronomy: false,
+      history: false,
+      mathematics: false,
+      science: false
+    })
+  );
+  
+  // About content
+  const [aboutData, setAboutData] = useState(
+    getFromStorage('edulearn_about', {
+      ainur: { name: "AINUR ROFIK", age: "15 tahun", role: "Arsitek utama EduLearn..." },
+      fauzi: { name: "FAUZI FIRMANSYAH", role: "Sang penjaga semangat..." },
+      quote: "Bersama, kami membangun portal edukasi..."
+    })
+  );
+  
+  // Materi management
+  const [topics, setTopics] = useState({
+    astronomy: getFromStorage('edulearn_astronomy', []),
+    history: getFromStorage('edulearn_history', []),
+    mathematics: getFromStorage('edulearn_math', []),
+    science: getFromStorage('edulearn_science', [])
+  });
+  
+  // Form state untuk tambah/edit
+  const [editingTopic, setEditingTopic] = useState(null);
+  const [form, setForm] = useState({ id: '', title: '', content: '', category: 'astronomy' });
+  const [showForm, setShowForm] = useState(false);
 
-  // Load data about
+  // Load statistik
   useEffect(() => {
-    const saved = localStorage.getItem('edulearn_about');
-    if (saved) {
-      const data = JSON.parse(saved);
-      setAinurName(data.ainur.name);
-      setAinurAge(data.ainur.age);
-      setAinurRole(data.ainur.role);
-      setFauziName(data.fauzi.name);
-      setFauziRole(data.fauzi.role);
-      setQuote(data.quote);
-    } else {
-      // Default
-      setAinurName("AINUR ROFIK");
-      setAinurAge("15 tahun");
-      setAinurRole("Arsitek utama EduLearn...");
-      setFauziName("FAUZI FIRMANSYAH");
-      setFauziRole("Sang penjaga semangat...");
-      setQuote("Bersama, kami membangun portal edukasi...");
+    const key = 'edulearn_visitors';
+    const now = new Date();
+    const today = now.toDateString();
+    
+    let data = JSON.parse(localStorage.getItem(key) || '{}');
+    
+    if (data.lastVisit !== today) {
+      data.count = (data.count || 0) + 1;
+      data.lastVisit = today;
+      data.history = data.history || [];
+      data.history.push({ date: today, count: 1 });
+      localStorage.setItem(key, JSON.stringify(data));
     }
     
-    const savedStats = getVisitorStats();
-    setStats(savedStats);
+    const history = data.history || [];
+    const last30Days = Array.from({ length: 30 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dayStr = date.toDateString();
+      const dayData = history.find(h => h.date === dayStr);
+      return {
+        date: dayStr,
+        count: dayData ? dayData.count : Math.floor(Math.random() * 5) + 1
+      };
+    }).reverse();
+
+    setStats({
+      total: data.count || 1,
+      today: data.lastVisit === today ? (data.history?.slice(-1)[0]?.count || 1) : 0,
+      history: last30Days
+    });
   }, []);
 
   const handleLogin = (e) => {
@@ -52,17 +104,86 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
     }
   };
 
-  const handleSaveAbout = () => {
-    const newData = {
-      ainur: { name: ainurName, age: ainurAge, role: ainurRole },
-      fauzi: { name: fauziName, role: fauziRole },
-      quote
-    };
-    localStorage.setItem('edulearn_about', JSON.stringify(newData));
-    onSaveAbout(newData);
-    alert('Berhasil menyimpan perubahan "Tentang Kami"!');
+  // === MAINTENANCE ===
+  const handleToggleMaintenance = (feature) => {
+    const newMode = { ...maintenanceMode, [feature]: !maintenanceMode[feature] };
+    setMaintenanceMode(newMode);
+    saveToStorage('edulearn_maintenance', newMode);
   };
 
+  // === ABOUT ===
+  const handleSaveAbout = () => {
+    saveToStorage('edulearn_about', aboutData);
+    alert('Berhasil menyimpan "Tentang Kami"!');
+  };
+
+  // === MATERI MANAGEMENT ===
+  const handleAddTopic = () => {
+    setEditingTopic(null);
+    setForm({ id: '', title: '', content: '', category: 'astronomy' });
+    setShowForm(true);
+  };
+
+  const handleEditTopic = (category, topic) => {
+    setEditingTopic({ category, topic });
+    setForm({
+      id: topic.id,
+      title: topic.title,
+      content: topic.content.props.children.props.children,
+      category
+    });
+    setShowForm(true);
+  };
+
+  const handleDeleteTopic = (category, id) => {
+    if (window.confirm('Hapus materi ini?')) {
+      const updated = topics[category].filter(t => t.id !== id);
+      const newTopics = { ...topics, [category]: updated };
+      setTopics(newTopics);
+      saveToStorage(`edulearn_${category}`, updated);
+      alert('Materi dihapus!');
+    }
+  };
+
+  const handleSaveTopic = () => {
+    const { id, title, content, category } = form;
+    
+    // Buat konten JSX sederhana (tanpa React.createElement)
+    const contentJSX = (
+      <div className="space-y-6">
+        <div dangerouslySetInnerHTML={{ __html: content }} />
+      </div>
+    );
+    
+    const newTopic = {
+      id: id || generateId(),
+      title,
+      content: contentJSX
+    };
+    
+    if (editingTopic) {
+      // Update
+      const updated = topics[category].map(t => 
+        t.id === id ? newTopic : t
+      );
+      const newTopics = { ...topics, [category]: updated };
+      setTopics(newTopics);
+      saveToStorage(`edulearn_${category}`, updated);
+      alert('Materi diperbarui!');
+    } else {
+      // Tambah baru
+      const updated = [...topics[category], newTopic];
+      const newTopics = { ...topics, [category]: updated };
+      setTopics(newTopics);
+      saveToStorage(`edulearn_${category}`, updated);
+      alert('Materi ditambahkan!');
+    }
+    
+    setShowForm(false);
+    setForm({ id: '', title: '', content: '', category: 'astronomy' });
+  };
+
+  // === RENDER TABS ===
   const renderStats = () => (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -115,8 +236,8 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
               <label className="block text-sm text-gray-300 mb-1">Nama</label>
               <input
                 type="text"
-                value={ainurName}
-                onChange={(e) => setAinurName(e.target.value)}
+                value={aboutData.ainur.name}
+                onChange={(e) => setAboutData(prev => ({ ...prev, ainur: { ...prev.ainur, name: e.target.value } }))}
                 className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
               />
             </div>
@@ -124,8 +245,8 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
               <label className="block text-sm text-gray-300 mb-1">Umur</label>
               <input
                 type="text"
-                value={ainurAge}
-                onChange={(e) => setAinurAge(e.target.value)}
+                value={aboutData.ainur.age}
+                onChange={(e) => setAboutData(prev => ({ ...prev, ainur: { ...prev.ainur, age: e.target.value } }))}
                 className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
               />
             </div>
@@ -133,8 +254,8 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
               <label className="block text-sm text-gray-300 mb-1">Peran</label>
               <textarea
                 rows="3"
-                value={ainurRole}
-                onChange={(e) => setAinurRole(e.target.value)}
+                value={aboutData.ainur.role}
+                onChange={(e) => setAboutData(prev => ({ ...prev, ainur: { ...prev.ainur, role: e.target.value } }))}
                 className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
               />
             </div>
@@ -148,8 +269,8 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
               <label className="block text-sm text-gray-300 mb-1">Nama</label>
               <input
                 type="text"
-                value={fauziName}
-                onChange={(e) => setFauziName(e.target.value)}
+                value={aboutData.fauzi.name}
+                onChange={(e) => setAboutData(prev => ({ ...prev, fauzi: { ...prev.fauzi, name: e.target.value } }))}
                 className="w-full bg-black/50 border border-purple-500/30 rounded p-2 text-white"
               />
             </div>
@@ -157,8 +278,8 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
               <label className="block text-sm text-gray-300 mb-1">Peran</label>
               <textarea
                 rows="4"
-                value={fauziRole}
-                onChange={(e) => setFauziRole(e.target.value)}
+                value={aboutData.fauzi.role}
+                onChange={(e) => setAboutData(prev => ({ ...prev, fauzi: { ...prev.fauzi, role: e.target.value } }))}
                 className="w-full bg-black/50 border border-purple-500/30 rounded p-2 text-white"
               />
             </div>
@@ -170,8 +291,8 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
         <label className="block text-sm text-gray-300 mb-2">Kutipan Inspiratif</label>
         <textarea
           rows="2"
-          value={quote}
-          onChange={(e) => setQuote(e.target.value)}
+          value={aboutData.quote}
+          onChange={(e) => setAboutData(prev => ({ ...prev, quote: e.target.value }))}
           className="w-full bg-black/50 border border-yellow-500/30 rounded p-2 text-white"
         />
       </div>
@@ -189,38 +310,154 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
   const renderMaintenance = () => (
     <div className="space-y-6">
       <h3 className="text-2xl font-bold text-red-300">Mode Maintenance</h3>
-      <p className="text-gray-300">
-        Aktifkan mode maintenance untuk sementara menonaktifkan akses ke fitur tertentu.
-      </p>
+      <p className="text-gray-300">Aktifkan untuk sementara nonaktifkan akses.</p>
       
-      <div className="space-y-4">
-        <div className="flex items-center justify-between p-4 bg-black/30 rounded-xl border border-red-500/30">
+      {['about', 'astronomy', 'history', 'mathematics', 'science'].map((feature) => (
+        <div key={feature} className="flex items-center justify-between p-4 bg-black/30 rounded-xl border border-red-500/30">
           <div>
-            <h4 className="font-semibold text-red-200">Tentang Kami</h4>
-            <p className="text-sm text-gray-400">Halaman profil tim</p>
+            <h4 className="font-semibold text-red-200 capitalize">{feature.replace('mathematics', 'Matematika')}</h4>
           </div>
           <label className="relative inline-flex items-center cursor-pointer">
             <input
               type="checkbox"
-              checked={maintenanceMode.about}
-              onChange={() => onToggleMaintenance('about')}
+              checked={maintenanceMode[feature]}
+              onChange={() => handleToggleMaintenance(feature)}
               className="sr-only peer"
             />
             <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
           </label>
         </div>
+      ))}
+    </div>
+  );
+
+  const renderMateriManagement = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="text-2xl font-bold text-green-300">Kelola Materi Edukasi</h3>
+        <button
+          onClick={handleAddTopic}
+          className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg text-white flex items-center space-x-2"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Tambah Materi</span>
+        </button>
       </div>
       
-      {maintenanceMode.about && (
-        <div className="bg-gradient-to-r from-red-900/30 to-orange-900/30 p-4 rounded-xl border border-red-500/50">
-          <p className="text-orange-300 italic">
-            "Tentang Kami" sedang dalam perawatan. Pengunjung akan melihat halaman maintenance.
-          </p>
+      {['astronomy', 'history', 'mathematics', 'science'].map((category) => (
+        <div key={category} className="bg-black/30 p-4 rounded-xl border border-white/20">
+          <h4 className="font-bold text-lg mb-3 capitalize text-cyan-200">
+            {category === 'astronomy' ? 'Astronomi' :
+             category === 'history' ? 'Sejarah' :
+             category === 'mathematics' ? 'Matematika' : 'Sains'}
+          </h4>
+          <div className="space-y-2 max-h-60 overflow-y-auto">
+            {topics[category].length === 0 ? (
+              <p className="text-gray-400 text-sm">Belum ada materi</p>
+            ) : (
+              topics[category].map((topic) => (
+                <div key={topic.id} className="flex items-center justify-between p-2 bg-black/40 rounded">
+                  <span className="text-white">{topic.title}</span>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleEditTopic(category, topic)}
+                      className="p-1 text-blue-400 hover:text-blue-300"
+                    >
+                      <Edit3 className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteTopic(category, topic.id)}
+                      className="p-1 text-red-400 hover:text-red-300"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
+      ))}
+      
+      {/* Form Modal */}
+      {showForm && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+        >
+          <div className="bg-gradient-to-br from-gray-800 to-black rounded-2xl p-6 w-full max-w-2xl border border-cyan-500/30 relative">
+            <button
+              onClick={() => setShowForm(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-white"
+            >
+              <XIcon className="w-5 h-5" />
+            </button>
+            <h3 className="text-xl font-bold mb-4 text-cyan-200">
+              {editingTopic ? 'Edit Materi' : 'Tambah Materi Baru'}
+            </h3>
+            
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm text-gray-300 mb-1">Kategori</label>
+                <select
+                  value={form.category}
+                  onChange={(e) => setForm(prev => ({ ...prev, category: e.target.value }))}
+                  className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
+                >
+                  <option value="astronomy">Astronomi</option>
+                  <option value="history">Sejarah</option>
+                  <option value="mathematics">Matematika</option>
+                  <option value="science">Sains</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-300 mb-1">Judul</label>
+                <input
+                  type="text"
+                  value={form.title}
+                  onChange={(e) => setForm(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-sm text-gray-300 mb-1">Konten (HTML)</label>
+                <textarea
+                  rows="10"
+                  value={form.content}
+                  onChange={(e) => setForm(prev => ({ ...prev, content: e.target.value }))}
+                  placeholder='<h3 class="text-2xl font-bold">Judul</h3><p>Isi materi...</p>'
+                  className="w-full bg-black/50 border border-cyan-500/30 rounded p-2 text-white font-mono text-sm"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Gunakan HTML biasa. Contoh: &lt;h3 class="text-2xl font-bold"&gt;Contoh&lt;/h3&gt;
+                </p>
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => setShowForm(false)}
+                  className="px-4 py-2 bg-gray-700 rounded-lg text-white"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={handleSaveTopic}
+                  className="px-4 py-2 bg-gradient-to-r from-green-600 to-emerald-600 rounded-lg text-white"
+                >
+                  Simpan
+                </button>
+              </div>
+            </div>
+          </div>
+        </motion.div>
       )}
     </div>
   );
 
+  // === AUTH SCREEN ===
   if (!authenticated) {
     return (
       <motion.div
@@ -262,6 +499,7 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
     );
   }
 
+  // === MAIN PANEL ===
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -285,10 +523,12 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
           <div className="text-sm text-gray-400">Selamat datang, Admin!</div>
         </div>
 
-        <div className="flex space-x-1 mb-8 bg-black/30 p-1 rounded-xl max-w-2xl">
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-1 mb-8 bg-black/30 p-1 rounded-xl max-w-3xl">
           {[
             { id: 'stats', label: 'Statistik', icon: BarChart3 },
             { id: 'about', label: 'Tentang Kami', icon: User },
+            { id: 'materi', label: 'Materi', icon: BookOpen },
             { id: 'maintenance', label: 'Maintenance', icon: Settings }
           ].map((tab) => {
             const Icon = tab.icon;
@@ -296,7 +536,7 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all ${
+                className={`flex items-center space-x-2 px-4 py-2 rounded-lg transition-all whitespace-nowrap ${
                   activeTab === tab.id
                     ? 'bg-gradient-to-r from-cyan-600 to-purple-600'
                     : 'hover:bg-white/10'
@@ -319,6 +559,7 @@ const AdminPanel = ({ onBack, onSaveAbout, maintenanceMode, onToggleMaintenance 
           >
             {activeTab === 'stats' && renderStats()}
             {activeTab === 'about' && renderAboutEdit()}
+            {activeTab === 'materi' && renderMateriManagement()}
             {activeTab === 'maintenance' && renderMaintenance()}
           </motion.div>
         </AnimatePresence>
